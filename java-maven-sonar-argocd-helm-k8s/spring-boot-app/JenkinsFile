@@ -5,6 +5,9 @@ pipeline {
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
+  environment {
+    SONAR_URL = "http://54.167.47.247:9000"
+  }
   stages {
     stage('Checkout') {
       steps {
@@ -12,35 +15,38 @@ pipeline {
         // git branch: 'main', url: 'https://github.com/Srinidhi-10-2k/Jenkins-Zero-To-Hero.git'
       }
     }
+
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
       }
     }
-    stage('Test SonarQube Connection') {
-      environment {
-        SONAR_URL = "http://54.167.47.247:9000"
-      }
+
+    stage('Diagnose Network (Inside Docker)') {
       steps {
-        // This will help verify connectivity inside pipeline container
-        sh 'curl -v ${SONAR_URL}'
+        sh """
+          echo '--- Checking network ---'
+          ping -c 2 54.167.47.247 || echo 'ping failed'
+          curl -v ${SONAR_URL} || echo 'curl failed'
+        """
       }
     }
-    stage('Static Code Analysis') {
-      environment {
-        SONAR_URL = "http://54.167.47.247:9000"
-      }
+
+    stage('Static Code Analysis (Outside Docker)') {
+      // Run this stage OUTSIDE Docker to bypass any Docker networking problems
+      agent any
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-          // Use triple-double quotes so Groovy interpolates variables properly
           sh """
-            cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && \
+            echo '--- Running Sonar Scanner outside Docker ---'
+            cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
             mvn sonar:sonar -X -Dsonar.login=${SONAR_AUTH_TOKEN} -Dsonar.host.url=${SONAR_URL}
           """
         }
       }
     }
+
     stage('Build and Push Docker Image') {
       environment {
         DOCKER_IMAGE = "abhishekf5/ultimate-cicd:${BUILD_NUMBER}"
@@ -56,6 +62,7 @@ pipeline {
         }
       }
     }
+
     stage('Update Deployment File') {
       environment {
         GIT_REPO_NAME = "Jenkins-Zero-To-Hero"

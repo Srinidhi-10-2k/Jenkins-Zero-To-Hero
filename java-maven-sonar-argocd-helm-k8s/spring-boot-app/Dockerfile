@@ -10,4 +10,6 @@ WORKDIR /opt/app
 COPY ${artifact} app.jar
 
 # This should not be changed
+CMD ["sleep", "infinity"]
 ENTRYPOINT ["java","-jar","app.jar"]
+

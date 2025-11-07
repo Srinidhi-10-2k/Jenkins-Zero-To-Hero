@@ -22,7 +22,7 @@ agent { label 'jenkins' }
     }
     stage('Static Code Analysis') {
       environment {
-        SONAR_URL = "http://107.23.133.227:9000"
+        SONAR_URL = "http://34.201.99.253:9000"
       }
       steps {
         withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_AUTH_TOKEN')]) {

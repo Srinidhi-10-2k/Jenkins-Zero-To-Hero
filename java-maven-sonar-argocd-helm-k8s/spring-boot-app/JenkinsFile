@@ -39,7 +39,7 @@ stage('Build and Push Docker Image') {
     script {
       docker.withRegistry('https://index.docker.io/v1/', 'docker69') {
         def image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-        image.push()
+        sh 'docker push dockeruser039/srinidhi10:v2'
       }
     }
   }

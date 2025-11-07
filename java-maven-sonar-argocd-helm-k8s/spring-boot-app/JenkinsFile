@@ -11,6 +11,7 @@ agent { label 'jenkins' }
       steps {
         sh 'echo passed'
         //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
+       checkout([$class: 'GitSCM', branches: [[name: '*/main']]
       }
     }
     stage('Build and Test') {

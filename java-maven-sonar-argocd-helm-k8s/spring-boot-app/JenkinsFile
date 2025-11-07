@@ -31,17 +31,20 @@ agent { label 'jenkins' }
       }
     }
 stage('Build and Push Docker Image') {
-    
-    steps {
-          dir('java-maven-sonar-argocd-helm-k8s/spring-boot-app') {
-          sh 'docker build -t dockeruser039/srinidhi10:v2 . '
-          sh 'docker login -u dockeruser039'
-          sh 'docker push dockeruser039/srinidhi10:v2'         
-          
-           }
-        
+  environment {
+    IMAGE_NAME = "dockeruser039/srinidhi10"
+    IMAGE_TAG = "v2"
+  }
+  steps {
+    script {
+      docker.withRegistry('https://index.docker.io/v1/', 'docker69') {
+        def image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+        image.push()
+      }
     }
+  }
 }
+
 
     stage('Update Deployment File') {
         environment {

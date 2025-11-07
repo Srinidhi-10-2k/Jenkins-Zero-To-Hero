@@ -55,7 +55,7 @@ stage('Build and Push Docker Image') {
             GIT_USER_NAME = "Srinidhi-10-2k"
         }
         steps {
-            withCredentials([string(credentialsId: 'github toekn', variable: 'GITHUB_TOKEN')]) {
+            withCredentials([string(credentialsId: 'github token', variable: 'GITHUB_TOKEN')]) {
                 sh '''
                     git config user.email "srinidhimr2000@gmail.com"
                     git config user.name "Srinidhi"

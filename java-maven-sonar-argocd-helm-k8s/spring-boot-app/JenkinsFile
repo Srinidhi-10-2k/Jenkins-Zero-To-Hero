@@ -36,6 +36,8 @@ stage('Build and Push Docker Image') {
           dir('java-maven-sonar-argocd-helm-k8s/spring-boot-app') {
           sh 'docker build -t dockeruser039/srinidhi10:v2 . '
           sh 'docker push dockeruser039/srinidhi10:v2'
+          sh ' docker login' 
+          
           
            }
         

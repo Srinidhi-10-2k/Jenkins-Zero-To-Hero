@@ -5,6 +5,10 @@ pipeline {
         args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
 } 
+environment {
+    JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
+    PATH = "${JAVA_HOME}/bin:${env.PATH}"
+}
 
   stages {
     stage('Checkout') {

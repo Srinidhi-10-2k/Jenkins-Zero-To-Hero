@@ -11,6 +11,11 @@ maven "maven3"
         //git branch: 'main', url: 'https://github.com/Srinidhi-10-2k/Jenkins-Zero-To-Hero.git'
       }
     }
+stage('Fix Permissions') {
+    steps {
+        sh 'sudo chown -R jenkins:jenkins target || true'
+    }
+}
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
